@@ -8,7 +8,7 @@ using namespace std;
 
 const int kMaxN=100;
 
-int sa[kMaxN],tmp[2*kMaxN];
+int sa[kMaxN],lcp[kMaxN],tmp[2*kMaxN];
 int *rank,*next_rank;
 int delta,n;
 
@@ -38,6 +38,19 @@ void ConstructSA(const string &s){
 	}
 }
 
+void ConstructLCP(const string &s){
+	int n=s.length();
+	for(int i=0;i<=n;i++){
+		rank[sa[i]]=i;
+	}
+	lcp[0]=0;
+	for(int i=0,h=0;i<n;i++){
+		int j=sa[rank[i]-1];
+		for(h>0?h--:0;j+h<n && i+h<n && s[j+h]==s[i+h];h++);
+		lcp[rank[i]-1]=h;
+	}
+}
+
 int Find(const string &pattern,const string &str){
 	int l=0,r=n;
 	while(l+1<r){
@@ -58,11 +71,16 @@ int main(){
 	string s,p;
 	cin>>s;
 	ConstructSA(s);
+	ConstructLCP(s);
 	for(int i=1;i<=n;i++){
 		printf("%d ",sa[i]);
 	}
-	cin>>p;
-	cout<<Find(p,s)<<endl;
+	puts("");
+	for(int i=0;i<n;i++){
+		printf("%d ",lcp[i]);
+	}
+	//cin>>p;
+	//cout<<Find(p,s)<<endl;
 	return 0;
 }
 
